@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sorry, Vanshika</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<style>
+  :root {
+    --rose: #e8536a;
+    --blush: #f9d0d8;
+    --deep: #1a0a0e;
+    --cream: #fdf5f0;
+    --gold: #c9995c;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep);
+    min-height: 100vh;
+    font-family: 'Cormorant Garamond', serif;
+    overflow-x: hidden;
+  }
+
+  /* Starfield */
+  .stars { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .star {
+    position: absolute; width: 2px; height: 2px;
+    background: white; border-radius: 50%;
+    animation: twinkle var(--dur, 3s) infinite alternate var(--delay, 0s);
+    opacity: 0.3;
+  }
+  @keyframes twinkle {
+    from { opacity: 0.1; transform: scale(1); }
+    to   { opacity: 0.8; transform: scale(1.5); }
+  }
+
+  .page {
+    position: relative; min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 10;
+  }
+
+  /* ── HERO ── */
+  #hero { flex-direction: column; text-align: center; padding: 2rem; }
+
+  .hero-label {
+    font-style: italic; font-size: clamp(0.85rem, 2vw, 1rem);
+    letter-spacing: 0.4em; color: var(--gold); text-transform: uppercase;
+    animation: fadeUp 1s ease 0.3s both; margin-bottom: 1.5rem;
+  }
+  .hero-name {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(4rem, 14vw, 11rem); font-weight: 700;
+    color: var(--cream); line-height: 0.85;
+    animation: fadeUp 1s ease 0.7s both;
+  }
+  .hero-name span { color: var(--rose); font-style: italic; }
+  .hero-subtitle {
+    font-style: italic; font-size: clamp(1.2rem, 3vw, 2rem);
+    color: var(--blush); animation: fadeUp 1s ease 1.1s both;
+    margin-top: 1.5rem; font-weight: 300;
+  }
+  .scroll-hint {
+    margin-top: 3.5rem; animation: fadeUp 1s ease 1.8s both;
+    color: rgba(255,255,255,0.3); font-size: 0.75rem;
+    letter-spacing: 0.3em; text-transform: uppercase;
+  }
+  .scroll-arrow {
+    display: block; margin: 0.5rem auto 0; width: 1px; height: 50px;
+    background: linear-gradient(to bottom, transparent, var(--rose));
+    animation: pulse-line 2s infinite;
+  }
+  @keyframes pulse-line { 0%,100% { opacity: 0.3; } 50% { opacity: 1; } }
+
+  .hero-ring {
+    position: absolute;
+    width: min(70vw, 580px); height: min(70vw, 580px);
+    border: 1px solid rgba(232,83,106,0.12); border-radius: 50%;
+    animation: spin 30s linear infinite; pointer-events: none;
+  }
+  .hero-ring::before {
+    content: ''; position: absolute; width: 8px; height: 8px;
+    background: var(--rose); border-radius: 50%;
+    top: -4px; left: 50%; transform: translateX(-50%);
+    box-shadow: 0 0 20px var(--rose);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── SORRY CARDS ── */
+  #sorry { padding: 5rem 2rem; flex-direction: column; gap: 3rem; }
+
+  .section-eyebrow {
+    font-size: 0.75rem; letter-spacing: 0.5em; text-transform: uppercase;
+    color: var(--gold); font-style: italic;
+  }
+  .sorry-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+    gap: 1.8rem; max-width: 960px; width: 100%;
+  }
+  .sorry-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(232,83,106,0.2);
+    border-radius: 3px; padding: 2.5rem 2rem;
+    position: relative; overflow: hidden;
+    transition: all 0.4s ease;
+    animation: fadeUp 0.7s ease both;
+  }
+  .sorry-card:nth-child(1) { animation-delay: 0.1s; }
+  .sorry-card:nth-child(2) { animation-delay: 0.3s; }
+  .sorry-card:nth-child(3) { animation-delay: 0.5s; }
+  .sorry-card::before {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(135deg, rgba(232,83,106,0.07), transparent);
+    opacity: 0; transition: opacity 0.4s;
+  }
+  .sorry-card:hover { border-color: rgba(232,83,106,0.5); transform: translateY(-5px); box-shadow: 0 20px 60px rgba(232,83,106,0.12); }
+  .sorry-card:hover::before { opacity: 1; }
+  .card-number {
+    font-family: 'Playfair Display', serif; font-size: 5rem; font-weight: 700;
+    color: rgba(232,83,106,0.07); position: absolute;
+    top: -10px; right: 15px; line-height: 1; transition: color 0.4s;
+  }
+  .sorry-card:hover .card-number { color: rgba(232,83,106,0.18); }
+  .card-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; }
+  .card-title {
+    font-family: 'Playfair Display', serif; font-size: 1.35rem;
+    color: var(--cream); margin-bottom: 0.8rem; font-style: italic;
+  }
+  .card-text { font-size: 1rem; line-height: 1.75; color: rgba(253,245,240,0.6); font-weight: 300; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    width: 180px; height: 1px;
+    background: linear-gradient(to right, transparent, rgba(232,83,106,0.4), transparent);
+    margin: 0 auto; position: relative; z-index: 10;
+  }
+
+  /* ── PROMISES ── */
+  #promises { padding: 6rem 2rem; flex-direction: column; gap: 3rem; }
+  .promise-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.2rem, 6vw, 4.5rem);
+    color: var(--cream); text-align: center; line-height: 1.1; font-style: italic;
+  }
+  .promise-title em { color: var(--rose); font-style: normal; }
+  .promise-list { max-width: 600px; width: 100%; display: flex; flex-direction: column; gap: 1.2rem; }
+  .promise-item { display: flex; align-items: flex-start; gap: 1.2rem; animation: fadeUp 0.6s ease both; }
+  .promise-item:nth-child(1) { animation-delay: 0.1s; }
+  .promise-item:nth-child(2) { animation-delay: 0.25s; }
+  .promise-item:nth-child(3) { animation-delay: 0.4s; }
+  .promise-item:nth-child(4) { animation-delay: 0.55s; }
+  .promise-num {
+    font-family: 'Playfair Display', serif; font-size: 1.4rem;
+    color: var(--rose); font-style: italic; min-width: 2rem; text-align: right; line-height: 1.5;
+  }
+  .promise-text {
+    font-size: 1.05rem; color: rgba(253,245,240,0.75); line-height: 1.7;
+    border-left: 1px solid rgba(232,83,106,0.25); padding-left: 1.2rem;
+  }
+
+  /* ── ACTION ── */
+  #action { padding: 5rem 2rem 8rem; flex-direction: column; gap: 2.5rem; }
+  .action-question {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(1.5rem, 4vw, 3rem);
+    color: var(--cream); text-align: center; font-style: italic; line-height: 1.3;
+  }
+  .btn-wrap { display: flex; gap: 1.5rem; flex-wrap: wrap; justify-content: center; }
+
+  .btn-yes {
+    padding: 1rem 3rem; background: var(--rose); border: none;
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+    letter-spacing: 0.2em; text-transform: uppercase; color: white;
+    cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s ease;
+  }
+  .btn-yes::after {
+    content: ''; position: absolute; inset: 0;
+    background: rgba(255,255,255,0.15);
+    transform: translateX(-100%) skewX(-15deg); transition: transform 0.4s ease;
+  }
+  .btn-yes:hover::after { transform: translateX(150%) skewX(-15deg); }
+  .btn-yes:hover { box-shadow: 0 0 40px rgba(232,83,106,0.5); transform: translateY(-2px); }
+  .btn-yes:active { transform: scale(0.97); }
+
+  .btn-no {
+    padding: 1rem 2.5rem; background: transparent;
+    border: 1px solid rgba(253,245,240,0.2);
+    font-family: 'Cormorant Garamond', serif; font-size: 1.1rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    color: rgba(253,245,240,0.4); cursor: pointer; transition: all 0.3s ease;
+  }
+  .btn-no:hover { border-color: rgba(232,83,106,0.5); color: var(--rose); }
+  .btn-no:active { transform: scale(0.97); }
+
+  /* ── MODAL ── */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(10,3,5,0.88);
+    z-index: 2000; display: flex; align-items: center; justify-content: center;
+    opacity: 0; pointer-events: none; transition: opacity 0.4s ease;
+    backdrop-filter: blur(8px);
+  }
+  .modal-overlay.active { opacity: 1; pointer-events: all; }
+  .modal-box {
+    max-width: 480px; width: 90%; text-align: center;
+    padding: 3.5rem 2.5rem; background: var(--deep);
+    border: 1px solid rgba(232,83,106,0.35);
+    transform: scale(0.88); transition: transform 0.45s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  .modal-overlay.active .modal-box { transform: scale(1); }
+  .modal-emoji { font-size: 3rem; display: block; margin-bottom: 1.2rem; animation: heartbeat 1.2s ease infinite; }
+  @keyframes heartbeat { 0%,100% { transform: scale(1); } 50% { transform: scale(1.2); } }
+  .modal-title {
+    font-family: 'Playfair Display', serif; font-size: 2.2rem;
+    color: var(--cream); font-style: italic; margin-bottom: 0.8rem;
+  }
+  .modal-sub { font-size: 1.05rem; color: rgba(253,245,240,0.6); line-height: 1.7; font-weight: 300; margin-bottom: 2rem; }
+  .modal-close {
+    padding: 0.75rem 2.2rem; background: transparent;
+    border: 1px solid rgba(232,83,106,0.45); color: var(--rose);
+    font-family: 'Cormorant Garamond', serif; font-size: 1rem;
+    letter-spacing: 0.2em; text-transform: uppercase;
+    cursor: pointer; transition: all 0.3s ease;
+  }
+  .modal-close:hover { background: var(--rose); color: white; }
+
+  #confetti-canvas { position: fixed; inset: 0; pointer-events: none; z-index: 1001; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @media (max-width: 600px) {
+    .sorry-grid { grid-template-columns: 1fr; }
+    .sorry-card { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="confetti-canvas"></canvas>
+<div class="stars" id="stars"></div>
+
+<!-- HERO -->
+<section class="page" id="hero">
+  <div class="hero-ring"></div>
+  <div style="position:relative;z-index:2;">
+    <p class="hero-label">An apology to my good friend</p>
+    <h1 class="hero-name"><span>Vanshika</span></h1>
+    <p class="hero-subtitle">A true friend owes you the truth — and a real apology.</p>
+    <div class="scroll-hint">scroll down<span class="scroll-arrow"></span></div>
+  </div>
+</section>
+
+<!-- WHAT I REGRET -->
+<section class="page" id="sorry">
+  <p class="section-eyebrow">What I Regret</p>
+  <div class="sorry-grid">
+    <div class="sorry-card">
+      <span class="card-number">01</span>
+      <span class="card-icon">🚪</span>
+      <h3 class="card-title">I didn't involve you</h3>
+      <p class="card-text">I made decisions without bringing you in. You deserved a seat at the table, and I took that away from you without even realising it.</p>
+    </div>
+    <div class="sorry-card">
+      <span class="card-number">02</span>
+      <span class="card-icon">🔇</span>
+      <h3 class="card-title">I didn't ask you first</h3>
+      <p class="card-text">Before taking any decision, I should have come to you first. I didn't — and that was wrong. Your opinion matters, always.</p>
+    </div>
+    <div class="sorry-card">
+      <span class="card-number">03</span>
+      <span class="card-icon">💔</span>
+      <h3 class="card-title">I made you feel unimportant</h3>
+      <p class="card-text">This is the one I regret the most. You are incredibly important to me — and I failed to make you feel that. I am truly, deeply sorry.</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- PROMISES -->
+<section class="page" id="promises">
+  <h2 class="promise-title">My <em>promises</em><br>to you, Vanshika</h2>
+  <div class="promise-list">
+    <div class="promise-item">
+      <span class="promise-num">I.</span>
+      <p class="promise-text">I will always involve you in decisions that matter. Your voice will be the first one I seek — never an afterthought.</p>
+    </div>
+    <div class="promise-item">
+      <span class="promise-num">II.</span>
+      <p class="promise-text">Before taking any decision, I will come to you first. No more acting without asking. That is my word.</p>
+    </div>
+    <div class="promise-item">
+      <span class="promise-num">III.</span>
+      <p class="promise-text">I will never make you feel unimportant again — because you are one of the most important people in my life.</p>
+    </div>
+    <div class="promise-item">
+      <span class="promise-num">IV.</span>
+      <p class="promise-text">I won't repeat any of the above. Not for any reason, not at any cost. I mean every single word of this promise. 🙏</p>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ACTION -->
+<section class="page" id="action">
+  <h2 class="action-question">Will you forgive me,<br><em style="color:var(--rose);font-family:'Playfair Display',serif;">Vanshika?</em></h2>
+  <div class="btn-wrap">
+    <button class="btn-yes" id="btnYes">Yes, we're good! 🤝</button>
+    <button class="btn-no" id="btnNo">Not yet...</button>
+  </div>
+</section>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal">
+  <div class="modal-box">
+    <span class="modal-emoji" id="modalEmoji">🤝</span>
+    <h2 class="modal-title" id="modalTitle">Thank you, Vanshika!</h2>
+    <p class="modal-sub" id="modalSub">Your forgiveness means everything to me. I promise to always be the friend you deserve. 💛</p>
+    <button class="modal-close" id="modalClose">Close</button>
+  </div>
+</div>
+
+<script>
+  // ─────────────────────────────────────────────
+  //  ⚙️  EMAILJS CONFIG — fill these in!
+  // ─────────────────────────────────────────────
+  var EMAILJS_PUBLIC_KEY  = 't3KSslyrcHRUNnFSU';
+  var EMAILJS_SERVICE_ID  = 'service_qft4krd';
+  var EMAILJS_TEMPLATE_ID = 'template_ewfaxr8';
+  var YOUR_EMAIL          = '12213075@nitkkr.ac.in';
+  // ─────────────────────────────────────────────
+
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+
+  // Stars
+  var starsEl = document.getElementById('stars');
+  for (var i = 0; i < 120; i++) {
+    var s = document.createElement('div');
+    s.className = 'star';
+    s.style.cssText = 'left:' + (Math.random()*100) + '%;top:' + (Math.random()*100) + '%;--dur:' + (2+Math.random()*4) + 's;--delay:' + (Math.random()*4) + 's';
+    starsEl.appendChild(s);
+  }
+
+  // Confetti
+  function launchConfetti() {
+    var canvas = document.getElementById('confetti-canvas');
+    var ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    var colors = ['#e8536a','#f9d0d8','#c9995c','#ffffff','#ffd6e0'];
+    var particles = [];
+    for (var i = 0; i < 160; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: -10 - Math.random() * 200,
+        r: 4 + Math.random() * 6,
+        dx: (Math.random() - 0.5) * 4,
+        dy: 2 + Math.random() * 3.5,
+        rot: Math.random() * 360,
+        drot: (Math.random() - 0.5) * 6,
+        color: colors[Math.floor(Math.random() * colors.length)],
+        rect: Math.random() > 0.5
+      });
+    }
+    var stop = false;
+    setTimeout(function() { stop = true; ctx.clearRect(0,0,canvas.width,canvas.height); }, 5000);
+    function draw() {
+      if (stop) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      for (var i = 0; i < particles.length; i++) {
+        var p = particles[i];
+        ctx.save(); ctx.translate(p.x, p.y); ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color; ctx.globalAlpha = 0.88;
+        if (p.rect) ctx.fillRect(-p.r, -p.r/2, p.r*2, p.r);
+        else { ctx.beginPath(); ctx.arc(0,0,p.r/2,0,Math.PI*2); ctx.fill(); }
+        ctx.restore();
+        p.x += p.dx; p.y += p.dy; p.rot += p.drot; p.dy += 0.04;
+      }
+      requestAnimationFrame(draw);
+    }
+    draw();
+  }
+
+  // Send email via EmailJS
+  function sendEmail(response, message) {
+    emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+      to_email:      YOUR_EMAIL,
+      response_type: response,       // "YES ✅" or "NOT YET ❌"
+      response_msg:  message,        // what message was shown
+      time:          new Date().toLocaleString()
+    }).then(function() {
+      console.log('Email sent!');
+    }, function(err) {
+      console.warn('EmailJS error:', err);
+    });
+  }
+
+  // Modal
+  var modal      = document.getElementById('modal');
+  var modalEmoji = document.getElementById('modalEmoji');
+  var modalTitle = document.getElementById('modalTitle');
+  var modalSub   = document.getElementById('modalSub');
+
+  function openModal(emoji, title, sub) {
+    modalEmoji.textContent = emoji;
+    modalTitle.textContent = title;
+    modalSub.textContent   = sub;
+    modal.classList.add('active');
+  }
+  function closeModal() { modal.classList.remove('active'); }
+
+  // YES button
+  document.getElementById('btnYes').onclick = function() {
+    openModal('🤝', 'Thank you, Vanshika!', 'Your forgiveness means everything to me. I promise to always be the friend you deserve. 💛');
+    launchConfetti();
+    sendEmail('YES ✅ She forgave you!', 'Vanshika clicked "Yes, we\'re good!" — she forgave you! 🎉');
+  };
+
+  // NO button
+  var noCount = 0;
+  var noMsgs = [
+    ['😔', 'I understand...', "Take all the time you need. I'll be right here, waiting patiently."],
+  ];
+  document.getElementById('btnNo').onclick = function() {
+    var idx = Math.min(noCount, noMsgs.length - 1);
+    openModal(noMsgs[idx][0], noMsgs[idx][1], noMsgs[idx][2]);
+    sendEmail('NOT YET ❌ She hasn\'t forgiven you', 'Vanshika clicked "Not yet..." — attempt #' + (noCount + 1) + '. Keep trying!');
+    noCount++;
+  };
+
+  document.getElementById('modalClose').onclick = closeModal;
+  modal.onclick = function(e) { if (e.target === modal) closeModal(); };
+</script>
+</body>
+</html>
